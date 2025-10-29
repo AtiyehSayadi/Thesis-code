@@ -1,0 +1,30 @@
+import random
+
+def generate_matrix():
+    """Generates a 4x4 matrix where aii = 1 and aij = 1/aji, with values between 1 and 9."""
+    size = 7  # Set size to 4 for a 4x4 matrix
+    matrix = [[0] * size for _ in range(size)]  # Initialize a 4x4 matrix with zeros
+
+    for i in range(size):
+        matrix[i][i] = 1  # Set diagonal elements aii = 1
+
+    for i in range(size):
+        for j in range(i + 1, size):
+            value = random.uniform(1, 7)  # Generate a random value between 1 and 9
+            matrix[i][j] = float(value)   # Assign random value to aij
+            matrix[j][i] = 1 / float(value)  # Set aji = 1 / aij
+
+    return matrix
+
+def save_matrices_to_file(filename, num_matrices=100):
+    """Saves 100 randomly generated 4x4 matrices to a file."""
+    with open(filename, 'w') as file:
+        for idx in range(1, num_matrices + 1):
+            matrix = generate_matrix()
+            file.write(f"Matrix {idx}:\n")
+            for row in matrix:
+                file.write(" ".join(f"{value:.6f}" for value in row) + "\n")
+            file.write("\n")
+
+# Generate and save 100 matrices to a file
+save_matrices_to_file("d:/cas739/project/mainproject/range 7 project/matrices7.txt")
