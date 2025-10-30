@@ -123,16 +123,16 @@ def adjust_matrix(Q):
 #     ["⊐", "≈", "<"],
 #     ["⊃", "≺", "≈"]
 # ])
-# Q_example = np.array([
-#     ["≈", "⊂", "≈", "⊏", "⊃", "≈", "<", "⊐"],
-#     ["⊃", "≈", ">", "≈", "≻", "⊐", "≈", ">"],
-#     ["≈", "<", "≈", "⊂", "⊐", "⊏", "<", "⊏"],
-#     ["⊐", "≈", "⊃", "≈", "≻", "≈", "⊏", ">"],
-#     ["⊂", "≺", "⊏", "≺", "≈", "<", "≺", "≈"],
-#     ["≈", "⊏", "⊐", "≈", ">", "≈", "⊂", "⊃"],
-#     [">", "≈", ">", "⊐", "≻", "⊃", "≈", "≻"],
-#     ["⊏", "<", "⊐", "<", "≈", "⊂", "≺", "≈"]
-# ])
+Q_example = np.array([
+    ["≈", "⊂", "≈", "⊏", "⊃", "≈", "<", "⊐"],
+    ["⊃", "≈", ">", "≈", "≻", "⊐", "≈", ">"],
+    ["≈", "<", "≈", "⊂", "⊐", "⊏", "<", "⊏"],
+    ["⊐", "≈", "⊃", "≈", "≻", "≈", "⊏", ">"],
+    ["⊂", "≺", "⊏", "≺", "≈", "<", "≺", "≈"],
+    ["≈", "⊏", "⊐", "≈", ">", "≈", "⊂", "⊃"],
+    [">", "≈", ">", "⊐", "≻", "⊃", "≈", "≻"],
+    ["⊏", "<", "⊐", "<", "≈", "⊂", "≺", "≈"]
+])
 # # matrix =np.array( [
 # #     ["≈", "≻", "≺", "⊂", "⊐"],
 # #     ["≺", "≈", "≺", "⊃", ">"],
@@ -141,8 +141,8 @@ def adjust_matrix(Q):
 # #     ["⊏", "<", "⊐", "≻", "≈"]
 # # ])
 
-# inconsistency_matrix = compute_inconsistency_matrix(Q_example)
-# print(inconsistency_matrix)
-# Q_adjusted = adjust_matrix(Q_example)
-# print(Q_adjusted)
+inconsistency_matrix = compute_inconsistency_matrix(Q_example)
+print(inconsistency_matrix)
+Q_adjusted = adjust_matrix(Q_example)
+print(Q_adjusted)
 # print(compute_inconsistency_matrix(Q_adjusted))

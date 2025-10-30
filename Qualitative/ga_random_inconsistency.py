@@ -245,7 +245,8 @@ Q_example = np.array([
 # ])
 #children_matrices = create_child(matrix,10)
 #print(children_matrices)
-# print(main(Q_example))
+print(compute_inconsistency_matrix(Q_example))
+print(main(Q_example))
 #print(mutation(matrix,))
 
 # print(compute_inconsistency_matrix(Q_example))

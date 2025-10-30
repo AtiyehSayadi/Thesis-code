@@ -88,9 +88,11 @@ def compute_inconsistency_matrix(Q):
                         aik=Q[i,k]
                         aij_expected = rules.check_rules(aik, akj)
                         if Q[i, j] not in aij_expected:
+                            # print(i,j,k)
                             violation_count += 1
                 
                 inconsistency_matrix[i, j] = violation_count
+                inconsistency_matrix[j, i] = violation_count
     
     return inconsistency_matrix
 
@@ -219,7 +221,7 @@ def main(matrix,fixed):
     # print(best_matrix,number_generaration,min_inconsistency)
     # print(best_min)
     #print(all_inconsistency)
-    #print(best_matrix)
+    print(best_matrix)
     return best_min,number_generaration
 
 # matrix =np.array( [
@@ -251,10 +253,12 @@ def main(matrix,fixed):
 #        ['≈', '⊏', '⊃', '≈', '>', '≈', '⊂', '⊃'],
 #        ['>', '≈', '>', '⊐', '≻', '⊃', '≈', '>'],
 #        ['⊏', '<', '⊐', '<', '⊐', '⊂', '<', '≈']])
-#children_matrices = create_child(matrix,10)
+# children_matrices = create_child(matrix,10)
 #print(children_matrices)
 # main(Q_example)
 #print(mutation(matrix,))
 
 # print(compute_inconsistency_matrix(Q_example))
-# print(main(Q_example,[(5,7),(7,5)]))
+# print(main(Q_example,[]))
+# print("matrix",compute_inconsistency_matrix(matrix))
+# print(main(matrix,[]))

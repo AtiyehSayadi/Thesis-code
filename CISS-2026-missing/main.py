@@ -7,8 +7,8 @@ from collections import Counter
 priority = ["≻",">","⊃","⊐","≈", "⊏", "⊂", "<", "≺"]
 inverse = {"≈": "≈", "⊏": "⊐", "⊐": "⊏", "⊂": "⊃", "⊃": "⊂", "<": ">", ">": "<", "≺": "≻", "≻": "≺"}
 
-LEFT  = {"<", "≺", "⊂", "⊏"}   # looking left  -> +1
-RIGHT = {">", "≻", "⊃", "⊐"}   # looking right -> -1
+RIGHT  = {"<", "≺", "⊂", "⊏"}   # looking right  -> +1
+LEFT = {">", "≻", "⊃", "⊐"}   # looking left -> -1
 
 
 # def compute_inconsistency_matrix(Q):
@@ -103,26 +103,71 @@ def _possible(Q, i, j):
     
     return  allowed                  # could be None when no triangle usable
 
+# def complete_all(Q):
+#     sols = []
+#     def dfs(A):
+#         nxt = _next_unknown(A)
+#         if not nxt:
+#             sols.append(A); return
+#         i, j = nxt
+#         cand = _possible(A, i, j)
+#         cand = priority if cand is None else sorted(cand, key=priority.index)
+#         print(i,j,cand)
+#         if not cand:
+#             return
+#         for r in cand:
+#             B = A.copy()
+#             B[i, j] = r
+#             B[j, i] = inverse[r]
+#             dfs(B)
+#     dfs(Q.copy())
+#     # print (sols)
+#     return sols
+
+
 def complete_all(Q):
-    sols = []
-    def dfs(A):
-        nxt = _next_unknown(A)
-        if not nxt:
-            sols.append(A); return
-        i, j = nxt
-        cand = _possible(A, i, j)
-        cand = priority if cand is None else sorted(cand, key=priority.index)
-        print(i,j,cand)
-        if not cand:
-            return
-        for r in cand:
-            B = A.copy()
-            B[i, j] = r
-            B[j, i] = inverse[r]
-            dfs(B)
-    dfs(Q.copy())
-    print (sols)
+    sols = [Q.copy()]     # start with one partial matri
+    n=0
+    while True:
+        new_sols = []
+        expanded = False  # flag to see if we filled anything
+
+        for A in sols:
+            nxt = _next_unknown(A)
+            
+            if not nxt:
+                # matrix is complete
+                new_sols.append(A)
+                continue
+
+            expanded = True
+            i, j = nxt
+            cand = _possible(A, i, j)
+            cand = priority if cand is None else sorted(cand, key=priority.index)
+            # print(i, j, cand)
+
+            if not cand:
+                continue  # contradiction → drop this branch
+
+            for r in cand:
+                B = A.copy()
+                B[i, j] = r
+                B[j, i] = inverse[r]
+                # if nxt==(0,4):
+                    
+                #     print (nxt,B)
+                #     n+=1
+                #     print(n)
+                #     print(i, j, cand)
+                new_sols.append(B)
+
+        sols = new_sols
+
+        if not expanded:
+            break  # no more "?" found → all matrices complete
+
     return sols
+
 
 
 
@@ -159,6 +204,7 @@ def order_with_ties(Q):
     for v in ordered_scores:
         grp = sorted(by_score[v])
         out.append(grp[0] if len(grp) == 1 else set(grp))
+    # print(out,s)
     return out, s
 
 def orders_for_all_solutions(solutions):
@@ -184,6 +230,7 @@ def count_order_repetitions_from_solutions(solutions):
         orders.append(key)
 
     counts = Counter(orders)
+    # print(counts)
     # sort by highest count first
     sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
     return sorted_counts
@@ -193,21 +240,26 @@ def count_order_repetitions_from_solutions(solutions):
 # ----- example -----
 if __name__ == "__main__":
     #pairs = {(0,1):">", (3,4):"⊐", (1,3):"⊂"}
-    pairs={(0,1):">", (2,3):">"}
-    Q0 = build_matrix(pairs, 4)
+    #pairs={(0,1):">", (1,2):"⊐",(3,4):"≻"}
+    #pairs={(0,1):"<", (1,2):">"}
+    #pairs={(0,1):">", (1,2):"⊐",(3,4):"≻", (4,5):"⊂", (5,6):">", (6,7):"≈"}  # solutions: 5078385 it takes about 4 min and 40 to calculate the final ranking and all algorithm
+    pairs={(0,1):">"}
+    Q0 = build_matrix(pairs,3)
     print(Q0)
     solutions = complete_all(Q0)
     print("solutions:", len(solutions))
+    # print(solutions)
     if solutions:
-        print(solutions[50])
-        print(compute_inconsistency_matrix(solutions[0]))
-        res = orders_for_all_solutions(solutions)
+        # print(compute_inconsistency_matrix(solutions[0]))
+        # res = orders_for_all_solutions(solutions)
         counts = count_order_repetitions_from_solutions(solutions)
         print("count=",counts)
         # for k, r in enumerate(res):  # show first few
         #     print(f"\nSolution #{k+1}")
         #     print("Scores:", r["scores"])
         #     print("Order :", r["order"]) 
+            
+        #     print(solutions[858])
 
 
 

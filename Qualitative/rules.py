@@ -163,7 +163,7 @@ def check_rules(aij, ajk):
         
     # Rule 15 d
     if (aij == ">" and ajk == "≺") or (aij == "≺" and ajk == ">"):
-        aik = {"≈" , "⊏" , "⊂" , "⊃" , "⊐"}
+        aik = {"≈" , "⊏" , "⊂" , "<" , "≺"}
         
         
     # Rule 16 a
