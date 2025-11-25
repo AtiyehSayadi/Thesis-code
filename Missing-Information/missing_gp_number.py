@@ -53,8 +53,8 @@ def compute_inconsistency_formula(A):
 
 
 def select_top_population(population,inconsitency,n=0.5):
-    inconsistency1= inconsitency
-    population1=population
+    inconsistency1= inconsitency.copy()
+    population1=population.copy()
     new_pop=[]
     i=0
     count=n*len(population)
@@ -170,7 +170,8 @@ matrix = np.array([
 # ], dtype=object)
 # b=main(matrix,[(4,2),(2,4)])
 # print(b)
-c=main(matrix,[(0,2),(2,0)])
+c=main(matrix,[(2,3),(3,2)])
 print(compute_inconsistency_formula(matrix))
 print(c)
+print(compute_inconsistency_formula(c[2]))
 

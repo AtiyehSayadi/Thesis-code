@@ -44,7 +44,7 @@ def create_child(matrix,fixed,n):
     count= 0
     while count < n-1:
         i, j = np.random.choice(size, 2, replace=False)
-        while i == j  or ((i,j) in fixed)or child[i,j] =="?" or (child[j,i]=="?"):  
+        while ((i,j) in fixed)or child[i,j] =="?" or (child[j,i]=="?"):  
             i, j = np.random.choice(size, 2, replace=False)
         current_symbol = matrix[i][j]
         idx = priority.index(current_symbol)
@@ -71,13 +71,20 @@ def compute_inconsistency_matrix(Q):
     n = Q.shape[0]
     inconsistency_matrix = np.zeros((n, n), dtype=int)
     
+    # for i in range(n):
+    #     for j in range(n):
+    #         if i != j:
+    #             violation_count = 0
+    #             for k in range(n):
+    #                 if k != i and k != j:
     for i in range(n):
-        for j in range(n):
-            if i != j:
-                violation_count = 0
-                for k in range(n):
-                    if k != i and k != j:
+        for j in range(i + 1, n):  # Only upper triangle
+            violation_count = 0
+            for k in range(n):
+                if k != i and k != j:
+
                         if Q[i, j] == "?" or Q[i, k] == "?" or Q[k, j] == "?":
+                            # print(i,k,j)
                             continue
                         # aij = Q[i, j]
                         # ajk = Q[j, k]
@@ -91,14 +98,14 @@ def compute_inconsistency_matrix(Q):
                             # print(i,j,k)
                             violation_count += 1
                 
-                inconsistency_matrix[i, j] = violation_count
-                inconsistency_matrix[j, i] = violation_count
+            inconsistency_matrix[i, j] = violation_count
+            inconsistency_matrix[j, i] = violation_count
     
     return inconsistency_matrix
 
 def select_top_population(population,inconsitency,n=0.5):
-    inconsistency1= inconsitency
-    population1=population
+    inconsistency1= inconsitency.copy()
+    population1=population.copy()
     new_pop=[]
     i=0
     count=n*len(population)
@@ -192,8 +199,11 @@ def main(matrix,fixed):
         inconsistency= []
         while k < population_size:
             #print(np.max(compute_inconsistency_matrix(current_generation[k])))
-            inconsistency.append(int(np.max(compute_inconsistency_matrix(current_generation[k]))))
-            all_inconsistency.append(int(np.max(compute_inconsistency_matrix(current_generation[k]))))
+            # inconsistency.append(int(np.max(compute_inconsistency_matrix(current_generation[k]))))
+            # all_inconsistency.append(int(np.max(compute_inconsistency_matrix(current_generation[k]))))
+            current_inconsistency= int(np.max(compute_inconsistency_matrix(current_generation[k])))
+            inconsistency.append(current_inconsistency)
+            all_inconsistency.append(current_inconsistency)
             k += 1
         #print (min_inconsistency)
         min_inconsistency= int(min(inconsistency))
@@ -235,16 +245,16 @@ def main(matrix,fixed):
 #     ["⊐", "≈", "⊂"],
 #     ["<", "⊃", "≈"]
 # ])
-# Q_example = np.array([
-#     ["≈", "⊂", "≈", "⊏", "⊃", "≈", "<", "⊐"],
-#     ["⊃", "≈", ">", "≈", "≻", "⊐", "≈", ">"],
-#     ["≈", "<", "≈", "⊂", "⊐", "⊏", "<", "⊏"],
-#     ["⊐", "≈", "⊃", "≈", "≻", "≈", "⊏", "?"],
-#     ["⊂", "≺", "⊏", "≺", "≈", "<", "≺", "≈"],
-#     ["≈", "⊏", "⊐", "≈", ">", "≈", "⊂", "⊃"],
-#     [">", "≈", ">", "⊐", "≻", "⊃", "≈", "≻"],
-#     ["⊏", "<", "⊐", "?", "≈", "⊂", "≺", "≈"]
-# ])
+Q_example = np.array([
+    ["≈", "⊂", "≈", "⊏", "⊃", "≈", "<", "⊐"],
+    ["⊃", "≈", ">", "≈", "≻", "⊐", "≈", ">"],
+    ["≈", "<", "≈", "⊂", "⊐", "⊏", "<", "⊏"],
+    ["⊐", "≈", "⊃", "≈", "≻", "≈", "⊏", "?"],
+    ["⊂", "≺", "⊏", "≺", "≈", "<", "≺", "≈"],
+    ["≈", "⊏", "⊐", "≈", ">", "≈", "⊂", "⊃"],
+    [">", "≈", ">", "⊐", "≻", "⊃", "≈", "≻"],
+    ["⊏", "<", "⊐", "?", "≈", "⊂", "≺", "≈"]
+])
 # matrix = np.array([['≈', '⊂', '?', '⊏', '⊃', '≈', '<', '⊐'],
 #        ['⊃', '≈', '>', '≈', '≻', '⊐', '≈', '>'],
 #        ['?', '<', '≈', '<', '⊐', '⊂', '<', '⊏'],
@@ -258,7 +268,7 @@ def main(matrix,fixed):
 # main(Q_example)
 #print(mutation(matrix,))
 
-# print(compute_inconsistency_matrix(Q_example))
-# print(main(Q_example,[]))
+print(compute_inconsistency_matrix(Q_example))
+print(main(Q_example,[]))
 # print("matrix",compute_inconsistency_matrix(matrix))
 # print(main(matrix,[]))

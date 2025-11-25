@@ -21,7 +21,7 @@ from collections import Counter
 
 
 #5quali1same
-#data= [70, 8, 8, 23, 4, 16, 30, 23, 22, 6, 17, 11, 24, 16, 8, 11, 15, 17, 25, 28, 18, 20, 10, 10, 11, 15, 11, 8, 2, 27, 17, 10, 18, 6, 35, 26, 6, 23, 10, 3, 9, 15, 16, 9, 19, 15, 26, 13, 11, 26, 19, 20, 4, 10, 5, 35, 14, 26, 10, 3, 14, 10, 26, 7, 5, 2, 3, 10, 7, 6, 5, 5, 25, 6, 20, 19, 8, 25, 19, 9, 2, 11, 9, 10, 29, 20, 29, 4, 8, 10, 7, 5, 24, 21, 9, 3, 4, 13, 18, 2]
+data= [70, 8, 8, 23, 4, 16, 30, 23, 22, 6, 17, 11, 24, 16, 8, 11, 15, 17, 25, 28, 18, 20, 10, 10, 11, 15, 11, 8, 2, 27, 17, 10, 18, 6, 35, 26, 6, 23, 10, 3, 9, 15, 16, 9, 19, 15, 26, 13, 11, 26, 19, 20, 4, 10, 5, 35, 14, 26, 10, 3, 14, 10, 26, 7, 5, 2, 3, 10, 7, 6, 5, 5, 25, 6, 20, 19, 8, 25, 19, 9, 2, 11, 9, 10, 29, 20, 29, 4, 8, 10, 7, 5, 24, 21, 9, 3, 4, 13, 18, 2]
 
 #5quali2same
 #data=[18, 7, 7, 24, 4, 11, 16, 11, 17, 6, 6, 7, 14, 11, 7, 8, 13, 4, 10, 27, 17, 11, 15, 4, 10, 7, 13, 7, 1, 14, 12, 7, 9, 2, 9, 21, 3, 14, 7, 3, 13, 33, 20, 5, 15, 17, 16, 10, 19, 6, 12, 5, 4, 12, 5, 29, 15, 10, 7, 2, 11, 13, 42, 4, 2, 1, 2, 9, 4, 5, 4, 5, 28, 6, 8, 8, 7, 21, 11, 6, 2, 7, 8, 13, 17, 27, 10, 2, 5, 7, 5, 3, 13, 15, 8, 3, 2, 10, 13, 1]
@@ -54,8 +54,8 @@ plt.figure(figsize=(7, 4))
 plt.bar(values, counts, color='blue', alpha=0.7,  width=0.1)
 
 # Add labels and title
-plt.xlabel('\nThe Number of Generations', fontdict={'fontsize': 17, 'fontweight': 'bold', 'fontname': 'DejaVu Serif'})
-plt.ylabel('The Number of Matrices', fontdict={'fontsize': 17, 'fontweight': 'bold', 'fontname': 'DejaVu Serif'})
+plt.xlabel('\nThe Number of Generations', fontdict={'fontsize': 25, 'fontweight': 'bold', 'fontname': 'DejaVu Serif'})
+plt.ylabel('The Number of Matrices', fontdict={'fontsize': 25, 'fontweight': 'bold', 'fontname': 'DejaVu Serif'})
 plt.yticks(fontsize=13, fontname= 'DejaVu Serif',fontweight= 'bold')
 plt.xticks(fontsize=7,fontname= 'DejaVu Serif', fontweight= 'bold')
 

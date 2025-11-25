@@ -137,8 +137,8 @@ def compute_inconsistency_matrix(Q):
     return inconsistency_matrix
 
 def select_top_population(population,inconsitency,n=0.5):
-    inconsistency1= inconsitency
-    population1=population
+    inconsistency1= inconsitency.copy()
+    population1=population.copy()
     new_pop=[]
     i=0
     count=n*len(population)
