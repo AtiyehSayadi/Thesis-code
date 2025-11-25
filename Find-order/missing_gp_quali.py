@@ -12,6 +12,20 @@ LEFT = {">", "≻", "⊃", "⊐"}   # looking left -> -1
 
 
 
+def build_matrix(pairs, n):
+    Q = np.full((n, n), "?", dtype=object)
+    np.fill_diagonal(Q, "≈")
+
+    for (i, j), rel in pairs.items():
+        # i -= 1
+        # j -= 1
+        Q[i, j] = rel
+        Q[j, i] = inverse[rel]
+
+    return Q
+
+
+
 def create_child(matrix,fixed,n):
     
     size = matrix.shape[0]
@@ -318,8 +332,14 @@ def find_missing_multiple(matrix):
         counts = count_order_repetitions_from_solutions(solutions)
         print(counts)
     return solutions
+
+
+pairs = {(0,1):">", (3,4):"⊐", (1,3):"⊂"}
+#pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏", (9,10):"⊐", (10,11):"≈"} #solutions:    Execution time:  milliseconds
             
-    
+Q0 = build_matrix(pairs, 5)
+find_missing_multiple(Q0)  
+   
 
 # matrix =np.array( [
 #     ["≈", "⊏", "≻"],
@@ -360,4 +380,3 @@ Q_example = np.array([
 # print("matrix",compute_inconsistency_matrix(matrix))
 # print(main(matrix,[]))
 
-print(find_missing_multiple(Q_example))

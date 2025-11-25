@@ -1,12 +1,30 @@
 import numpy as np
 import random
+from collections import Counter
 
-def read_matrix_from_file(file_path):
-    with open(file_path, 'r') as file:
-        matrix = []
-        for line in file:
-            matrix.append([float(x) for x in line.split()])
-    return np.array(matrix)
+
+
+
+
+def build_matrix(pairs, n):
+    Q = np.full((n, n), "?", dtype=object)
+    np.fill_diagonal(Q, 1)
+
+    for (i, j), rel in pairs.items():
+        # i -= 1
+        # j -= 1
+        Q[i, j] = rel
+        Q[j, i] = 1/rel
+
+    return Q
+
+
+# def read_matrix_from_file(file_path):
+#     with open(file_path, 'r') as file:
+#         matrix = []
+#         for line in file:
+#             matrix.append([float(x) for x in line.split()])
+#     return np.array(matrix)
 
 def create_child(matrix,fixed,n):
     
@@ -124,7 +142,7 @@ def main(matrix,fixed):
     best_min=[]
     best_matrix=[]
     all_inconsistency= []
-    while number_generaration<100 and min_inconsistency> 0.3:
+    while number_generaration<400 and min_inconsistency> 0.3:
         k= 0
         inconsistency= []
         while k < population_size:
@@ -154,6 +172,7 @@ def main(matrix,fixed):
     #print(best_matrix,number_generaration,min_inconsistency)
     # print(best_min)
     # print(len(all_inconsistency))
+    print("numbr-gen=",number_generaration)
     return best_matrix
 
 def find_missing(matrix):
@@ -176,6 +195,67 @@ def find_missing(matrix):
         final_matrix=main(consistent_matrix,fixed)
     print(compute_inconsistency_formula(final_matrix))
     return fixed,final_matrix
+
+
+
+def gm_method(A):
+    n = A.shape[0]
+    # geometric mean of each row
+    row_gm = np.prod(A, axis=1) ** (1/n)
+    # normalize
+    w = row_gm / np.sum(row_gm)
+    return w
+
+
+def order_with_ties(Q):
+    """
+    Returns a list where each item is either an int (single rank)
+    or a set of ints (tie group). Example: [0, 1, {2, 3}]
+    """
+    s = gm_method(Q)
+    # bucket indices by score
+    by_score = {}
+    for i, v in enumerate(s):
+        by_score.setdefault(v, []).append(i)
+
+    # sort scores high -> low
+    ordered_scores = sorted(by_score.keys(), reverse=True)
+
+    # build order list; singletons as int, ties as set
+    out = []
+    for v in ordered_scores:
+        grp = sorted(by_score[v])
+        out.append(grp[0] if len(grp) == 1 else set(grp))
+    # print(out,s)
+    return out, s
+
+def orders_for_all_solutions(solutions):
+    """For each matrix in sols, return (order_with_ties, scores)."""
+    results = []
+    for Q in solutions:
+        ow, sc = order_with_ties(Q)
+        results.append({"order": ow, "scores": sc})
+    return results
+
+def count_order_repetitions_from_solutions(solutions):
+    """
+    Count how many times each unique order appears in all solution matrices.
+    Input: list of matrices (solutions)
+    Output: Counter with order patterns and their counts
+    """
+    orders = []
+    for Q in solutions:
+        order, _ = order_with_ties(Q)
+        # make the order hashable for counting
+        key = tuple(frozenset(x) if isinstance(x, set) else x for x in order)
+        orders.append(key)
+
+    counts = Counter(orders)
+    # print(counts)
+    # sort by highest count first
+    sorted_counts = sorted(counts.items(), key=lambda x: x[1], reverse=True)
+    return sorted_counts
+
 
 
 
@@ -210,17 +290,26 @@ def find_missing_multiple(matrix):
         print(compute_inconsistency_formula(final_matrix))
         solutions.append(final_matrix)
         n+=1
+    if solutions:
+        
+        counts = count_order_repetitions_from_solutions(solutions)
+        print(counts)
         
     return solutions
 
 
 
-matrix = np.array([
-    [1, 2, 5, 9],
-    [0.5, 1, 3, "?"],
-    [0.2, 1/3, 1,  4],
-    [1/9, "?", 0.25, 1]
-], dtype=object)
+pairs=pairs = {(0,1):0.5, (3,4):3, (1,3):2}
+            
+Q0 = build_matrix(pairs, 5)
+find_missing_multiple(Q0)
+
+# matrix = np.array([
+#     [1, 2, 5, 9],
+#     [0.5, 1, 3, "?"],
+#     [0.2, 1/3, 1,  4],
+#     [1/9, "?", 0.25, 1]
+# ], dtype=object)
 # matrix = np.array([
 #     [1.000000, 2.812488, 0.5, 2.584059, "?"],
 #     [0.355557, 1.000000, 0.338721, 0.841543, "?"],
@@ -234,5 +323,23 @@ matrix = np.array([
 # print(compute_inconsistency_formula(matrix))
 # print(c)
 # print(compute_inconsistency_formula(c[2]))
-print(find_missing_multiple(matrix))
+# find_missing_multiple(matrix)
+
+
+# def gm_method(A):
+#     n = A.shape[0]
+#     # geometric mean of each row
+#     row_gm = np.prod(A, axis=1) ** (1/n)
+#     # normalize
+#     w = row_gm / np.sum(row_gm)
+#     return w
+
+# # Example:
+# A = np.array([
+#     [1,   3,   5],
+#     [1/3, 1,   4],
+#     [1/5, 1/4, 1]
+# ], dtype=float)
+
+# print(gm_method(A))
 
