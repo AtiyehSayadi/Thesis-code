@@ -2,7 +2,8 @@ import numpy as np
 import random
 import rules
 from collections import Counter
-
+import time
+import timeit
 
 priority = ["≻",">","⊃","⊐","≈", "⊏", "⊂", "<", "≺"]
 inverse = {"≈": "≈", "⊏": "⊐", "⊐": "⊏", "⊂": "⊃", "⊃": "⊂", "<": ">", ">": "<", "≺": "≻", "≻": "≺"}
@@ -239,12 +240,20 @@ def count_order_repetitions_from_solutions(solutions):
 
 # ----- example -----
 if __name__ == "__main__":
+    start_time = time.time()
     #pairs = {(0,1):">", (3,4):"⊐", (1,3):"⊂"}
-    #pairs={(0,1):">", (1,2):"⊐",(3,4):"≻"}
-    #pairs={(0,1):"<", (1,2):">"}
-    #pairs={(0,1):">", (1,2):"⊐",(3,4):"≻", (4,5):"⊂", (5,6):">", (6,7):"≈"}  # solutions: 5078385 it takes about 4 min and 40 to calculate the final ranking and all algorithm
-    pairs={(0,1):">"}
-    Q0 = build_matrix(pairs,3)
+    #pairs={(0,1):">", (1,2):"⊐",(3,4):"≻"} #solutions: 862 Execution time: 4.473 ms ms Execution time: 13.20 milliseconds
+    #pairs={(0,1):"<", (2,3):">"} #solutions: 97 Execution time: 0.579 ms Execution time: 2.56 milliseconds
+    #pairs={(0,1):">", (1,2):"⊐",(3,4):"≻", (4,5):"⊂", (5,6):">", (6,7):"≈"}  # solutions: 5078385  Execution time: 174955.59 milliseconds Execution time: 114950.273 ms
+    #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈"} #solutions: 59749  Execution time: 2689.263 ms Execution time: 3266.85 milliseconds
+    #pairs={(0,1):">"}  #solutions: 22   Execution time: 0.080 ms   Execution time: 1.45 milliseconds
+    #pairs={(0,1):">", (1,2):"⊐",(2,3):">",(3,4):"≻", (5,6):"<"} #solutions: 5270 Execution time: 165.25 milliseconds Execution time: 139.930 ms
+    #pairs={(0,1):">", (1,2):"⊂", (3,4):"≻",(4,5):"≻"} #solutions: 3487 Execution time: 72.110 ms Execution time: 91.76 milliseconds
+    #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<"} #solutions:2863763    Execution time: 274887.01  milliseconds
+    #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏"} #solutions:    Execution time:  milliseconds
+    #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏", (9,10):"⊐"} #solutions:    Execution time:  milliseconds
+    #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏", (9,10):"⊐", (10,11):"≈"} #solutions:    Execution time:  milliseconds
+    Q0 = build_matrix(pairs, 10) 
     print(Q0)
     solutions = complete_all(Q0)
     print("solutions:", len(solutions))
@@ -260,6 +269,12 @@ if __name__ == "__main__":
         #     print("Order :", r["order"]) 
             
         #     print(solutions[858])
+        end_time = time.time()     # <-- end timer
+        total_elapsed = (end_time - start_time) * 1000
+        print(f"Execution time: {total_elapsed:.2f} ms")
+        # elapsed = timeit.timeit(lambda: complete_all(Q0), number=1)
+        # #elapsed = timeit.timeit(lambda: count_order_repetitions_from_solutions(solutions), number=1)
+        # print(f"Execution time: {elapsed * 1000:.3f} ms")
 
 
 
