@@ -145,7 +145,7 @@ def complete_all(Q):
             i, j = nxt
             cand = _possible(A, i, j)
             cand = priority if cand is None else sorted(cand, key=priority.index)
-            # print(i, j, cand)
+            print(i, j, cand)
 
             if not cand:
                 continue  # contradiction → drop this branch
@@ -242,7 +242,7 @@ def count_order_repetitions_from_solutions(solutions):
 if __name__ == "__main__":
     start_time = time.time()
     #pairs = {(0,1):">", (3,4):"⊐", (1,3):"⊂"}
-    #pairs={(0,1):">", (1,2):"⊐",(3,4):"≻"} #solutions: 862 Execution time: 4.473 ms ms Execution time: 13.20 milliseconds
+    pairs={(0,1):">", (1,2):"⊐",(3,4):"≻"} #solutions: 862 Execution time: 4.473 ms ms Execution time: 13.20 milliseconds
     #pairs={(0,1):"<", (2,3):">"} #solutions: 97 Execution time: 0.579 ms Execution time: 2.56 milliseconds
     #pairs={(0,1):">", (1,2):"⊐",(3,4):"≻", (4,5):"⊂", (5,6):">", (6,7):"≈"}  # solutions: 5078385  Execution time: 174955.59 milliseconds Execution time: 114950.273 ms
     #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈"} #solutions: 59749  Execution time: 2689.263 ms Execution time: 3266.85 milliseconds
@@ -253,7 +253,7 @@ if __name__ == "__main__":
     #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏"} #solutions:    Execution time:  milliseconds
     #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏", (9,10):"⊐"} #solutions:    Execution time:  milliseconds
     #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏", (9,10):"⊐", (10,11):"≈"} #solutions:    Execution time:  milliseconds
-    Q0 = build_matrix(pairs, 10) 
+    Q0 = build_matrix(pairs, 5) 
     print(Q0)
     solutions = complete_all(Q0)
     print("solutions:", len(solutions))
