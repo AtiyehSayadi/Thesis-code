@@ -3,6 +3,7 @@ import random
 import tkinter as tk
 import rules
 import sys
+import time
 
 
 
@@ -302,8 +303,10 @@ def mutation(cross):
     return child
 
 def main(matrix1):
+    start_time = time.time()
     a=matrix1.shape[0]
     matrix=convert_matrix_to_numbers(matrix1, a)
+    
     population_size=1000
     current_generation= create_child(matrix,population_size)
     number_generaration=0
@@ -355,12 +358,16 @@ def main(matrix1):
 
     
     # best_matrix=np.round(best_matrix.astype(float), 2)
+    end_time = time.time()     # <-- end timer
+    total_elapsed = (end_time - start_time) * 1000
+    print(f"Execution time: {total_elapsed:.2f} ms")
     print(np.array(convert_best_matrix_to_qualitative(best_matrix)))
     print(best_matrix)
     print(compute_inconsistency_matrix(np.array(convert_best_matrix_to_qualitative(best_matrix))))
     count_inconsistency=0
     if np.any(compute_inconsistency_matrix(np.array(convert_best_matrix_to_qualitative(best_matrix))) != 0):
         count_inconsistency +=1
+    
     return np.array(convert_best_matrix_to_qualitative(best_matrix)),best_min,number_generaration, count_inconsistency
 
 # matrix =np.array( [

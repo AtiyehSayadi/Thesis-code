@@ -1,6 +1,8 @@
 import numpy as np
 import random
 from collections import Counter
+import time
+import timeit
 
 
 
@@ -142,7 +144,7 @@ def main(matrix,fixed):
     best_min=[]
     best_matrix=[]
     all_inconsistency= []
-    while number_generaration<400 and min_inconsistency> 0.3:
+    while number_generaration<100 and min_inconsistency> 0.3:
         k= 0
         inconsistency= []
         while k < population_size:
@@ -172,7 +174,7 @@ def main(matrix,fixed):
     #print(best_matrix,number_generaration,min_inconsistency)
     # print(best_min)
     # print(len(all_inconsistency))
-    print("numbr-gen=",number_generaration)
+    # print("numbr-gen=",number_generaration)
     return best_matrix
 
 def find_missing(matrix):
@@ -188,12 +190,12 @@ def find_missing(matrix):
                 value=float(random.randint(1, 5))
                 consistent_matrix[i,j]=value
                 consistent_matrix[j,i]=1/value
-    print(consistent_matrix)
-    print(compute_inconsistency_formula(consistent_matrix))
+    # print(consistent_matrix)
+    # print(compute_inconsistency_formula(consistent_matrix))
     final_matrix=consistent_matrix.copy()
     if compute_inconsistency_formula(final_matrix)>0.3:
         final_matrix=main(consistent_matrix,fixed)
-    print(compute_inconsistency_formula(final_matrix))
+    # print(compute_inconsistency_formula(final_matrix))
     return fixed,final_matrix
 
 
@@ -261,13 +263,21 @@ def count_order_repetitions_from_solutions(solutions):
 
 
 def find_missing_multiple(matrix):
-    consistent_matrix=main(matrix,[])
-    size=len(consistent_matrix)
+    
+    # consistent_matrix=matrix.copy()
+    # print("incon", compute_inconsistency_formula(matrix))
+    # if compute_inconsistency_formula(matrix) > 0.3:
+        
+    #     consistent_matrix=main(matrix,[])
+    #     print("conmat",consistent_matrix)
+    #     print("incom",compute_inconsistency_formula(consistent_matrix))
+    start_time = time.time()
+    size=len(matrix)
     fixed=[]
     miss=[]
     for i in range(size):
         for j in range(i + 1, size):
-            if consistent_matrix[i,j]!= "?":
+            if matrix[i,j]!= "?":
                 fixed.append((i,j))
                 fixed.append((j,i))
             else:
@@ -277,39 +287,67 @@ def find_missing_multiple(matrix):
     n=0
     solutions=[]
     while n<20:
+        consistent_matrix=matrix.copy()
+        # print("incon", compute_inconsistency_formula(matrix))
+        if compute_inconsistency_formula(matrix) > 0.3:
+            
+            consistent_matrix=main(matrix,[])
+            # print("conmat",consistent_matrix)
+            # print("incom",compute_inconsistency_formula(consistent_matrix))
+        # size=len(consistent_matrix)
+        # fixed=[]
+        # miss=[]
+        # for i in range(size):
+        #     for j in range(i + 1, size):
+        #         if consistent_matrix[i,j]!= "?":
+        #             fixed.append((i,j))
+        #             fixed.append((j,i))
+        #         else:
+                    
+        #             miss.append((i,j))
         for (i, j) in miss:
             value=float(random.randint(1, 5))
             consistent_matrix[i,j]=value
             consistent_matrix[j,i]=1/value
-        print("cons=",consistent_matrix)
-        print(compute_inconsistency_formula(consistent_matrix))
+        # print("cons=",consistent_matrix)
+        # print(compute_inconsistency_formula(consistent_matrix))
         final_matrix=consistent_matrix.copy()
         if compute_inconsistency_formula(final_matrix)>0.3:
             final_matrix=main(consistent_matrix,fixed)
-        print("final=",final_matrix)
-        print(compute_inconsistency_formula(final_matrix))
+        # print("final=",final_matrix)
+        # print(compute_inconsistency_formula(final_matrix))
         solutions.append(final_matrix)
         n+=1
     if solutions:
         
         counts = count_order_repetitions_from_solutions(solutions)
         print(counts)
-        
-    return solutions
+    end_time = time.time()     # <-- end timer
+    total_elapsed = (end_time - start_time) * 1000
+    print(f"Execution time: {total_elapsed:.2f} ms")
+    return solutions,total_elapsed
 
 
 
-pairs=pairs = {(0,1):0.5, (3,4):3, (1,3):2}
+# pairs=pairs = {(0,1):0.5, (3,4):3, (1,3):0.5}
             
-Q0 = build_matrix(pairs, 5)
-find_missing_multiple(Q0)
+# Q0 = build_matrix(pairs, 5)
+# find_missing_multiple(Q0)
 
 # matrix = np.array([
-#     [1, 2, 5, 9],
-#     [0.5, 1, 3, "?"],
-#     [0.2, 1/3, 1,  4],
-#     [1/9, "?", 0.25, 1]
+#     [1, 1, 5, 9],
+#     [1, 1, 3, "?"],
+#     [0.2, 1/3, 1,  3],
+#     [1/9, "?", 1/3, 1]
 # ], dtype=object)
+# matrix=np.array([
+#     [1,   1,   2,   2,   "?"],
+#     [1,   1,   2,   2,   1/3],
+#     [1/2, 1/2, 1,   1/2, 1/5],
+#     [1/2, 1/2, 2,   1,   "?"],
+#     ["?",   3,   5,   "?",   1]
+# ], dtype=object)
+
 # matrix = np.array([
 #     [1.000000, 2.812488, 0.5, 2.584059, "?"],
 #     [0.355557, 1.000000, 0.338721, 0.841543, "?"],
@@ -317,6 +355,7 @@ find_missing_multiple(Q0)
 #     [0.386988, 1.188293, 0.328637, 1.000000, "?"],
 #     ["?", "?", 0.443961, "?", 1.000000]
 # ], dtype=object)
+# find_missing_multiple(matrix)
 # b=main(matrix,[(4,2),(2,4)])
 # print(b)
 # c=main(matrix,[(2,3),(3,2)])
@@ -334,12 +373,110 @@ find_missing_multiple(Q0)
 #     w = row_gm / np.sum(row_gm)
 #     return w
 
-# # Example:
+# Example:
 # A = np.array([
-#     [1,   3,   5],
-#     [1/3, 1,   4],
-#     [1/5, 1/4, 1]
+#     [1,   1,   1],
+#     [1, 1,   1],
+#     [1, 1, 1]
 # ], dtype=float)
 
 # print(gm_method(A))
+# print(order_with_ties(A))
 
+
+
+# 3x3
+# matrix = np.array([
+#     [1,   3,   "?"],
+#     [1/3, 1,   1/4],
+#     ["?", 4,   1]
+# ], dtype=object)
+
+
+# # 4x4
+# matrix = np.array([
+#     [1,   1/2, 4,   1/3],
+#     [2,   1,   1/5, "?"],
+#     [1/4, 5,   1,   3],
+#     [3,   "?", 1/3, 1]
+# ], dtype=object)
+
+
+# # 5x5
+# matrix = np.array([
+#     [1,   2,   1/4, 5,   1/3],
+#     [1/2, 1,   3,   1/5, 4],
+#     [4,   1/3, 1,   2,   "?"],
+#     [1/5, 5,   1/2, 1,   1/4],
+#     [3,   1/4, "?", 4,   1]
+# ], dtype=object)
+
+
+# # 6x6
+# matrix = np.array([
+#     [1,   1/3, 4,   2,   1/5, 5],
+#     [3,   1,   1/2, 1/4, "?", 2],
+#     [1/4, 2,   1,   3,   1/3, 1/5],
+#     [1/2, 4,   1/3, 1,   5,   1/4],
+#     [5,   "?", 3,   1/5, 1,   1/2],
+#     [1/5, 1/2, 5,   4,   2,   1]
+# ], dtype=object)
+
+
+# # 7x7
+# matrix = np.array([
+#     [1,   2,   1/5, 4,   1/3, 3,   "?"],
+#     [1/2, 1,   5,   1/4, 2,   1/3, 4],
+#     [5,   1/5, 1,   3,   1/2, 1/4, 2],
+#     [1/4, 4,   1/3, 1,   5,   1/5, 1/2],
+#     [3,   1/2, 2,   1/5, 1,   4,   1/3],
+#     [1/3, 3,   4,   5,   1/4, 1,   1/5],
+#     ["?", 1/4, 1/2, 2,   3,   5,   1]
+# ], dtype=object)
+
+
+# # 8x8
+# matrix = np.array([
+#     [1,   1/4, 3,   1/5, 4,   2,   1/3, 5],
+#     [4,   1,   1/2, 3,   1/4, 5,   2,   1/5],
+#     [1/3, 2,   1,   4,   1/5, 1/2, 5,   3],
+#     [5,   1/3, 1/4, 1,   2,   1/5, 4,   "?"],
+#     [1/4, 4,   5,   1/2, 1,   3,   1/5, 2],
+#     [1/2, 1/5, 2,   5,   1/3, 1,   3,   1/4],
+#     [3,   1/2, 1/5, 1/4, 5,   1/3, 1,   4],
+#     [1/5, 5,   1/3, "?", 1/2, 4,   1/4, 1]
+# ], dtype=object)
+
+
+# # 9x9
+# matrix = np.array([
+#     [1,   2,   1/4, 5,   1/3, 3,   1/5, 4,   2],
+#     [1/2, 1,   4,   1/5, 2,   1/3, 5,   1/4, 3],
+#     [4,   1/4, 1,   2,   1/5, 5,   1/3, 3,   "?"],
+#     [1/5, 5,   1/2, 1,   4,   1/4, 2,   1/3, 5],
+#     [3,   1/2, 5,   1/4, 1,   2,   1/5, 4,   1/3],
+#     [1/3, 3,   1/5, 4,   1/2, 1,   5,   1/4, 2],
+#     [5,   1/5, 3,   1/2, 5,   1/5, 1,   2,   1/4],
+#     [1/4, 4,   1/3, 3,   1/4, 4,   1/2, 1,   5],
+#     [1/2, 1/3, "?", 1/5, 3,   1/2, 4,   1/5, 1]
+# ], dtype=object)
+
+
+# # 10x10
+# matrix = np.array([
+#     [1,   1/2, 4,   1/5, 3,   1/4, 5,   2,   1/3, 4],
+#     [2,   1,   1/3, 5,   1/4, 3,   1/5, 4,   2,   1/2],
+#     [1/4, 3,   1,   2,   1/5, 5,   1/3, 1/4, 4,   3],
+#     [5, 1/5, 1/2, 1,   4,   1/3, 2,   5,   1/4, 1/5],
+#     [1/3, 4,   5,   1/4, 1,   2,   1/5, 3,   1/2, "?"],
+#     [4,   1/3, 1/5, 3,   1/2, 1,   4,   1/5, 5,   2],
+#     [1/5, 5,   3,   1/2, 5,   1/4, 1,   1/3, 2,   1/4],
+#     [1/2, 1/4, 4,   1/5, 1/3, 5,   3,   1,   1/4, 5],
+#     [3,   1/2, 1/4, 4,   2,   1/5, 1/2, 4,   1,   1/3],
+#     [1/4, 2,   1/3, 5,   "?", 1/2, 4,   1/5, 3,   1]
+# ], dtype=object)
+
+# find_missing_multiple(matrix)
+
+#with n=20 
+#3*3= 1479.45 ms   4*4= 11103.93 ms 5*5= 36391.13 ms 6*6= 109369.43 ms  7*7= 278015.87 ms  8*8= 1350942.53 ms 9*9=   10*10=

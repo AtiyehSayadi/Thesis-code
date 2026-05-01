@@ -2,13 +2,15 @@ import numpy as np
 import random
 import rules
 from collections import Counter
+import time
+import timeit
 
 
 priority = ["≻",">","⊃","⊐","≈", "⊏", "⊂", "<", "≺"]
 inverse = {"≈": "≈", "⊏": "⊐", "⊐": "⊏", "⊂": "⊃", "⊃": "⊂", "<": ">", ">": "<", "≺": "≻", "≻": "≺"}
 
-RIGHT  = {"<", "≺", "⊂", "⊏"}   # looking right  -> +1
-LEFT = {">", "≻", "⊃", "⊐"}   # looking left -> -1
+RIGHT  = {"<", "≺", "⊂", "⊏"}   # looking right  -> -1
+LEFT = {">", "≻", "⊃", "⊐"}   # looking left -> +1
 
 
 
@@ -169,7 +171,7 @@ def main(matrix,fixed):
     population_size=1000
     current_generation= create_child(matrix,fixed,population_size)
     number_generaration=0
-    min_inconsistency= 100
+    min_inconsistency= 1000
     best_min=[]
     best_matrix=[]
     all_inconsistency= []
@@ -227,10 +229,10 @@ def find_missing(matrix):
                 symbol=random.choice(priority)
                 consistent_matrix[i,j]=symbol
                 consistent_matrix[j,i]=inverse[symbol]
-    print(consistent_matrix)
-    print(compute_inconsistency_matrix(consistent_matrix))
+    # print(consistent_matrix)
+    # print(compute_inconsistency_matrix(consistent_matrix))
     final_matrix=main(consistent_matrix,fixed)
-    print(compute_inconsistency_matrix(final_matrix))
+    # print(compute_inconsistency_matrix(final_matrix))
     return fixed,final_matrix
 
 
@@ -299,14 +301,20 @@ def count_order_repetitions_from_solutions(solutions):
 
 
 def find_missing_multiple(matrix):
-    consistent_matrix=main(matrix,[])
-    size=len(consistent_matrix)
+    # consistent_matrix=matrix.copy()
+    # print(consistent_matrix)
+    # print("incon", compute_inconsistency_matrix(matrix))
+    # if int(np.max(compute_inconsistency_matrix(matrix))) !=0:
+    #     print("a")
+    #     consistent_matrix=main(matrix,[])
+    start_time = time.time()
+    size=len(matrix)
     fixed=[]
     i=0
     miss=[]
     for i in range(size):
         for j in range(i + 1, size):
-            if consistent_matrix[i,j]!= "?":
+            if matrix[i,j]!= "?":
                 fixed.append((i,j))
                 fixed.append((j,i))
             else:
@@ -314,31 +322,55 @@ def find_missing_multiple(matrix):
     n=0
     solutions=[]
     while n<20:
+        consistent_matrix=matrix.copy()
+        # print(consistent_matrix)
+        # print("incon", compute_inconsistency_matrix(matrix))
+        if int(np.max(compute_inconsistency_matrix(matrix))) !=0:
+            
+            consistent_matrix=main(matrix,[])
+            # print("consm1",consistent_matrix)
+            # print(compute_inconsistency_matrix(consistent_matrix))
+        # size=len(consistent_matrix)
+        # fixed=[]
+        # i=0
+        # miss=[]
+        # for i in range(size):
+        #     for j in range(i + 1, size):
+        #         if consistent_matrix[i,j]!= "?":
+        #             fixed.append((i,j))
+        #             fixed.append((j,i))
+        #         else:
+        #             miss.append((i,j))
         for (i, j) in miss:
             symbol = random.choice(priority)
             consistent_matrix[i, j] = symbol
             consistent_matrix[j, i] = inverse[symbol]
         
-        print(consistent_matrix)
-        print(compute_inconsistency_matrix(consistent_matrix))
+        # print("consma",consistent_matrix)
+        # print("incm",compute_inconsistency_matrix(consistent_matrix))
+        final_matrix=consistent_matrix.copy()
+        if int(np.max(compute_inconsistency_matrix(final_matrix))) !=0:
         
-        final_matrix=main(consistent_matrix,fixed)
-        print(final_matrix)
-        print(compute_inconsistency_matrix(final_matrix))
+            final_matrix=main(consistent_matrix,fixed)
+        # print("final",final_matrix)
+        # print("incfin",compute_inconsistency_matrix(final_matrix))
         n+=1
         solutions.append(final_matrix)
     if solutions:
         
         counts = count_order_repetitions_from_solutions(solutions)
         print(counts)
-    return solutions
+    end_time = time.time()     # <-- end timer
+    total_elapsed = (end_time - start_time) * 1000
+    print(f"Execution time: {total_elapsed:.2f} ms")    
+    return solutions, total_elapsed
 
 
-pairs = {(0,1):">", (3,4):"⊐", (1,3):"⊂"}
-#pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏", (9,10):"⊐", (10,11):"≈"} #solutions:    Execution time:  milliseconds
+# pairs = {(0,1):">", (3,4):"⊐", (1,3):"⊂"}
+# # #pairs={(0,1):">", (1,2):"⊂",(3,4):"≻", (4,5):"≻", (5,6):">", (6,7):"≈", (7,8):"<", (8,9):"⊏", (9,10):"⊐", (10,11):"≈"} #solutions:    Execution time:  milliseconds
             
-Q0 = build_matrix(pairs, 5)
-find_missing_multiple(Q0)  
+# Q0 = build_matrix(pairs, 5)
+# find_missing_multiple(Q0)  
    
 
 # matrix =np.array( [
@@ -352,16 +384,112 @@ find_missing_multiple(Q0)
 #     ["⊐", "≈", "⊂"],
 #     ["<", "⊃", "≈"]
 # ])
-Q_example = np.array([
-    ["≈", "⊂", "≈", "⊏", "⊃", "≈", "<", "?"],
-    ["⊃", "≈", ">", "≈", "≻", "⊐", "≈", ">"],
-    ["≈", "<", "≈", "⊂", "⊐", "⊏", "<", "⊏"],
-    ["⊐", "≈", "⊃", "≈", "≻", "≈", "⊏", "?"],
-    ["⊂", "≺", "⊏", "≺", "≈", "<", "≺", "≈"],
-    ["≈", "⊏", "⊐", "≈", ">", "≈", "⊂", "⊃"],
-    [">", "≈", ">", "⊐", "≻", "⊃", "≈", "≻"],
-    ["?", "<", "⊐", "?", "≈", "⊂", "≺", "≈"]
-])
+# Q_example = np.array([
+#     ["≈", "⊂", "≈", "⊏", "⊃", "≈", "<", "?"],
+#     ["⊃", "≈", ">", "≈", "≻", "⊐", "≈", ">"],
+#     ["≈", "<", "≈", "⊂", "⊐", "⊏", "<", "⊏"],
+#     ["⊐", "≈", "⊃", "≈", "≻", "≈", "⊏", "?"],
+#     ["⊂", "≺", "⊏", "≺", "≈", "<", "≺", "≈"],
+#     ["≈", "⊏", "⊐", "≈", ">", "≈", "⊂", "⊃"],
+#     [">", "≈", ">", "⊐", "≻", "⊃", "≈", "≻"],
+#     ["?", "<", "⊐", "?", "≈", "⊂", "≺", "≈"]
+# ])
+
+# Q_example = np.array([
+#     ["≈", "?", ">", "⊃", "⊐"],
+#     ["?", "≈", "⊃", "?", "⊂"],
+#     ["<", "⊏", "≈", "≻", ">"],
+#     ["⊂", "?", "≺", "≈", "≻"],
+#     ["⊏", "⊃", "<", "≺", "≈"]
+# ], dtype=object)
+
+# Q_example = np.array([
+#     ["≈", "⊐", "⊃", ">",  "?" ],
+#     ["⊏", "≈", ">", "⊃", "≻"],
+#     ["⊂", "<", "≈", "≻", "?" ],
+#     ["<", "⊂", "≺", "≈", "⊃"],
+#     ["?", "≺", "?", "⊂", "≈"]
+# ], dtype=object)
+
+# Q_example = np.array([
+#     ["≈", ">",  "?" ],
+#     ["<", "≈",  "⊃"],
+#     ["?", "⊂", "≈"]
+# ], dtype=object)
+
+# Q_example =np.array([
+#     ["≈", "⊐", ">",  "⊃"],
+#     ["⊏", "≈", "⊃", "?" ],
+#     ["<", "⊂", "≈", "≻"],
+#     ["⊂", "?", "≺", "≈"]
+# ], dtype=object)
+
+# Q_example=np.array([
+#     ["≈", "⊐", "⊃", ">", "⊂"],
+#     ["⊏", "≈", ">", "⊃", "≻"],
+#     ["⊂", "<", "≈", "≻", "?"],
+#     ["<", "⊂", "≺", "≈", "⊃"],
+#     ["⊃", "≺", "?", "⊂", "≈"]
+# ], dtype=object)
+
+# Q_example=np.array([
+#     ["≈", "⊐", "⊃", ">", "⊂", "≻"],
+#     ["⊏", "≈", ">", "⊃", "?", "⊂"],
+#     ["⊂", "<", "≈", "≻", "⊃", "⊐"],
+#     ["<", "⊂", "≺", "≈", "⊃", ">"],
+#     ["⊃", "?", "⊂", "⊂", "≈", "⊏"],
+#     ["≺", "⊃", "⊏", "<", "⊐", "≈"]
+# ], dtype=object)
+
+
+# Q_example= np.array([
+#     ["≈", "⊐", "⊃", ">", "⊂", "≻", "?"],
+#     ["⊏", "≈", ">", "⊃", "≻", "⊂", "⊃"],
+#     ["⊂", "<", "≈", "≻", "⊃", "⊐", "⊂"],
+#     ["<", "⊂", "≺", "≈", "⊃", ">", "⊏"],
+#     ["⊃", "≺", "⊂", "⊂", "≈", "⊏", "≻"],
+#     ["≺", "⊃", "⊏", "<", "⊐", "≈", "⊃"],
+#     ["?", "⊂", "⊃", "⊐", "≺", "⊂", "≈"]
+# ], dtype=object)
+
+# Q_example= np.array([
+#     ["≈", "⊐", "⊃", ">", "⊂", "≻", "⊐", "⊃"],
+#     ["⊏", "≈", ">", "⊃", "≻", "⊂", "⊃", "⊏"],
+#     ["⊂", "<", "≈", "≻", "⊃", "⊐", "⊂", "⊃"],
+#     ["<", "⊂", "≺", "≈", "⊃", ">", "⊏", "?"],
+#     ["⊃", "≺", "⊂", "⊂", "≈", "⊏", "≻", "⊐"],
+#     ["≺", "⊃", "⊏", "<", "⊐", "≈", "⊃", "⊂"],
+#     ["⊏", "⊂", "⊃", "⊐", "≺", "⊂", "≈", "⊐"],
+#     ["⊂", "⊐", "⊂", "?", "⊏", "⊃", "⊏", "≈"]
+# ], dtype=object)
+
+# Q_example=  np.array([
+#     ["≈", "⊐", "⊃", ">", "⊂", "≻", "⊐", "⊃", "⊂"],
+#     ["⊏", "≈", ">", "⊃", "≻", "⊂", "⊃", "⊏", "⊐"],
+#     ["⊂", "<", "≈", "≻", "⊃", "⊐", "⊂", "⊃", "?"],
+#     ["<", "⊂", "≺", "≈", "⊃", ">", "⊏", "⊂", "⊃"],
+#     ["⊃", "≺", "⊂", "⊂", "≈", "⊏", "≻", "⊐", "⊂"],
+#     ["≺", "⊃", "⊏", "<", "⊐", "≈", "⊃", "⊂", "⊏"],
+#     ["⊏", "⊂", "⊃", "⊐", "≺", "⊂", "≈", "⊐", "⊐"],
+#     ["⊂", "⊐", "⊂", "⊃", "⊏", "⊃", "⊏", "≈", "⊃"],
+#     ["⊃", "⊏", "?", "⊂", "⊃", "⊐", "⊏", "⊂", "≈"]
+# ], dtype=object)
+
+# Q_example=np.array([
+#     ["≈", "⊐", "⊃", ">", "⊂", "≻", "⊐", "⊃", "⊂", "⊏"],
+#     ["⊏", "≈", ">", "⊃", "≻", "⊂", "⊃", "⊏", "⊐", "⊂"],
+#     ["⊂", "<", "≈", "≻", "⊃", "⊐", "⊂", "⊃", "⊂", "⊏"],
+#     ["<", "⊂", "≺", "≈", "⊃", ">", "⊏", "⊂", "⊃", "⊐"],
+#     ["⊃", "≺", "⊂", "⊂", "≈", "⊏", "≻", "⊐", "⊂", "?"],
+#     ["≺", "⊃", "⊏", "<", "⊐", "≈", "⊃", "⊂", "⊏", "⊐"],
+#     ["⊏", "⊂", "⊃", "⊐", "≺", "⊂", "≈", "⊐", "⊐", "⊂"],
+#     ["⊂", "⊐", "⊂", "⊃", "⊏", "⊃", "⊏", "≈", "⊃", "⊐"],
+#     ["⊃", "⊏", "⊃", "⊂", "⊃", "⊐", "⊏", "⊂", "≈", "⊃"],
+#     ["⊐", "⊃", "⊐", "⊏", "?", "⊏", "⊃", "⊏", "⊂", "≈"]
+# ], dtype=object)
+
+
+# find_missing_multiple(Q_example)
 # matrix = np.array([['≈', '⊂', '?', '⊏', '⊃', '≈', '<', '⊐'],
 #        ['⊃', '≈', '>', '≈', '≻', '⊐', '≈', '>'],
 #        ['?', '<', '≈', '<', '⊐', '⊂', '<', '⊏'],
@@ -379,4 +507,7 @@ Q_example = np.array([
 # print(main(Q_example,[]))
 # print("matrix",compute_inconsistency_matrix(matrix))
 # print(main(matrix,[]))
+
+#with n=20 
+#3*3= 3069.20 ms   4*4= 6721.71 ms 5*5= 33213.30 ms 6*6=110411.45 ms 7*7= 269327.09  ms 8*8= 1036223.71 ms 9*9=   10*10=
 

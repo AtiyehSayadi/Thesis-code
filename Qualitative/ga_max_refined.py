@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import rules
+import time
 
 
 priority = ["≻",">","⊃","⊐","≈", "⊏", "⊂", "<", "≺"]
@@ -213,6 +214,7 @@ def mutation(cross):
     return child
 
 def main(matrix):
+    start_time = time.time()
     population_size=1000
     current_generation= create_child(matrix,population_size)
     number_generaration=0
@@ -262,6 +264,9 @@ def main(matrix):
     # print(best_matrix,number_generaration,min_inconsistency)
     # print(best_min)
     # #print(all_inconsistency)
+    end_time = time.time()     # <-- end timer
+    total_elapsed = (end_time - start_time) * 1000
+    print(f"Execution time: {total_elapsed:.2f} ms")
     print("best maatrix=",best_matrix)
     # print(compute_inconsistency_matrix(best_matrix))
     count_inconsistency=0
@@ -300,7 +305,7 @@ Q_example = np.array([
 # ])
 # children_matrices = create_child(matrix,10)
 # print(children_matrices)
-print(compute_inconsistency_matrix(Q_example))
+#print(compute_inconsistency_matrix(Q_example))
 print( main(Q_example))
 # print("a",crossover(matrix,Q_example))
 
