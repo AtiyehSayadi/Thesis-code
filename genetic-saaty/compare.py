@@ -3,9 +3,9 @@ from openpyxl import load_workbook
 
 BASE_PATH = "d:/research/code/genetic-saaty/"
 
-ORIGINAL_EXCEL = BASE_PATH + "filtered_matrices_CR_010_080.xlsx"
-REDUCED_EXCEL = BASE_PATH + "ga_reduced_n8_matrices.xlsx"
-OUTPUT_EXCEL = BASE_PATH + "ga_reduced_n8_with_measures.xlsx"
+ORIGINAL_EXCEL = BASE_PATH + "random_n8_CR_010_030.xlsx"
+REDUCED_EXCEL = BASE_PATH + "ga_reduced_n8_010_030_matrices.xlsx"
+OUTPUT_EXCEL = BASE_PATH + "ga_reduced_n8_010_030_with_measures.xlsx"
 
 N = 8
 TOL = 1e-6
@@ -84,7 +84,7 @@ def preference_measures(A_original, A_reduced):
 
 def main():
     wb_original = load_workbook(ORIGINAL_EXCEL, data_only=True)
-    ws_original = wb_original["n8_filtered"]
+    ws_original = wb_original["n8_CR_010_030"]
 
     wb_reduced = load_workbook(REDUCED_EXCEL)
     ws_reduced = wb_reduced.active

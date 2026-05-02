@@ -5,9 +5,9 @@ from main_gp import main
 
 BASE_PATH = "d:/research/code/genetic-saaty/"
 
-INPUT_FILE = BASE_PATH + "filtered_n8_CR_010_080.txt"
-OUTPUT_TXT = BASE_PATH + "ga_reduced_n8_matrices.txt"
-OUTPUT_EXCEL = BASE_PATH + "ga_reduced_n8_matrices.xlsx"
+INPUT_FILE = BASE_PATH + "random_n8_CR_010_030.txt"
+OUTPUT_TXT = BASE_PATH + "ga_reduced_n8_010_030_matrices.txt"
+OUTPUT_EXCEL = BASE_PATH + "ga_reduced_n8_010_030_matrices.xlsx"
 
 RI = {
     1: 0.00, 2: 0.00, 3: 0.58, 4: 0.90,
